@@ -18,13 +18,4 @@ def get_packages(file_path:str):
     except Exception as e:
         return str(e)
 
-
-
-setup(
-    author="Samiullah",
-    author_email="sami606713@gamil.com",
-    name="Health Impact Analysis",
-    description="This project project is totally dedicated to heath impact analysis",
-    packages=find_packages(),  # Automatically find packages
-    install_requires=get_packages("requirements.txt")
-)
+print(get_packages("requirements.txt"))

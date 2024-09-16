@@ -51,7 +51,8 @@ files=[
     "LICENSE",
     "setup.py",
     "Dockerfile",
-    ".dockerignore"
+    ".dockerignore",
+    "test_environment.py",
 ]
 
 for file in files:
