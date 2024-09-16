@@ -1,3 +1,4 @@
 pandas
 numpy
--e.
+scikit-learn
+xgboost

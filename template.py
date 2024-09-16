@@ -53,6 +53,7 @@ files=[
     "Dockerfile",
     ".dockerignore",
     "test_environment.py",
+    "dvc.yml"
 ]
 
 for file in files:
