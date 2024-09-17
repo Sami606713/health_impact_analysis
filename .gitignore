@@ -1,4 +1,3 @@
-/data
 venv/
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -164,3 +163,4 @@ cython_debug/
 #.idea/
 temp_remote/
 .vscode/
+/data
