@@ -4,7 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-# from src.utils import save_model    
+from src.utils import save_model    
 import pickle as pkl
 import pandas as pd
 import numpy as np
@@ -68,7 +68,7 @@ class DataTransformation:
             )
 
             logging.info(f"saving the transformer at {self.transformer_path}")
-            # self.save_model(transformer,self.transformer_path)
+            save_model(transformer,self.transformer_path)
             return transformer
 
         except Exception as e:
@@ -92,18 +92,6 @@ class DataTransformation:
             return processor
         except Exception as e:
             logging.error(f"Error in building the transformer: {e}")
-            raise
-    
-    def save_model(self,model,output_path):
-        """
-        This function will save the model to the disk
-        """
-        try:
-            logging.info("Saving the model")
-            with open(output_path, 'wb') as file:
-                pkl.dump(model, file)
-        except Exception as e:
-            logging.error(f"Error in saving the model: {e}")
             raise
         
     def process(self):
