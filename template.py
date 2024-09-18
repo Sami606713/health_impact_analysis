@@ -38,7 +38,7 @@ files=[
 
     os.path.join('src','models',"__init__.py"),
     os.path.join('src','models',"train_model.py"),
-    os.path.join('src','models',"predict_model.py"),
+    os.path.join('src','models',"find_best_model.py"),
 
     os.path.join('src','tests',"__init__.py"),
     os.path.join('src','tests',"test_model.py"),
@@ -53,7 +53,7 @@ files=[
     "Dockerfile",
     ".dockerignore",
     "test_environment.py",
-    "dvc.yml"
+    "dvc.yaml"
 ]
 
 for file in files:

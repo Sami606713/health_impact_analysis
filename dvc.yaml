@@ -4,31 +4,21 @@ stages:
     deps:
       - src/data/data_ingestion.py
       - Given_Data/Urban Air Quality and Health Impact Dataset.csv
-    outs:
-      - data/raw/raw.csv
 
   data_cleaning:
     cmd: python src/data/data_cleaning.py
     deps:
       - src/data/data_cleaning.py
       - data/raw/raw.csv
-    outs:
-      - data/cleaned/clean.csv
-  
+
   feature_engineering:
     cmd: python src/data/feature_engineering.py
     deps:
       - src/data/feature_engineering.py
-      - data/cleaned/clean.csv
-    outs:
-      - data/processed/process.csv
-  
+      - data/raw/clean.csv
+
   data_transformation:
     cmd: python src/data/data_transformation.py
     deps:
       - src/data/data_transformation.py
       - data/processed/process.csv
-    outs:
-      - Models/transformer.pkl
-      - data/processed/train.npy
-      - data/processed/test.npy

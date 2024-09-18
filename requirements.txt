@@ -4,3 +4,5 @@ scikit-learn
 xgboost
 statsmodels
 joblib
+fastapi
+flask
