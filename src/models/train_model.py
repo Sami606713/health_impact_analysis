@@ -44,7 +44,7 @@ class ModelTraining:
 
             # Training all the models
             reg=LazyRegressor(x_train=x_train,y_train=y_train,x_test=x_test,y_test=y_test)
-            reg.train_all()
+            # reg.train_all()
             # Get Best model from the trained models
             best_model=reg.get_best_model()
 

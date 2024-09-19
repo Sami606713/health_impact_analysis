@@ -163,4 +163,3 @@ cython_debug/
 #.idea/
 temp_remote/
 .vscode/
-/data

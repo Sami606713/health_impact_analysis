@@ -22,3 +22,11 @@ stages:
     deps:
       - src/data/data_transformation.py
       - data/processed/process.csv
+  
+  model_training:
+    cmd: python src/models/train_model.py
+    deps:
+      - src/models/train_model.py
+      - data/processed/train.npy
+      - data/processed/test.npy
+      - Models/model.pkl
