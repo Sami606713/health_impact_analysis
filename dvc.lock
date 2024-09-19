@@ -44,6 +44,17 @@ stages:
       hash: md5
       md5: b3ba30da450ad9cd5fd937102cf28cd0
       size: 424797
+    - path: src/data/data_transformation.py
+      hash: md5
+      md5: 6d3752f9735b5992ef9f3c216d3363d4
+      size: 5472
+  model_training:
+    cmd: python src/models/train_model.py
+    deps:
+    - path: Models/model.pkl
+      hash: md5
+      md5: db3179eb6f500db94b9b9790874798cf
+      size: 11539440
     - path: data/processed/test.npy
       hash: md5
       md5: 5b81985300f240bf04dea330b019a337
@@ -52,7 +63,7 @@ stages:
       hash: md5
       md5: 0343bedc0d00a76ee036d7dd4ded288a
       size: 422528
-    - path: src/data/data_transformation.py
+    - path: src/models/train_model.py
       hash: md5
-      md5: 6d3752f9735b5992ef9f3c216d3363d4
-      size: 5472
+      md5: 0262a24e28e4cef79dce35a770c55ed9
+      size: 7051

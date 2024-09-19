@@ -1,6 +1,3 @@
-import numpy as np
-# from src.models.find_best_model import LazyRegressor
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.utils import all_estimators
 from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
 from sklearn.model_selection import cross_val_score
@@ -12,13 +9,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 logging.basicConfig(level=logging.INFO)
-from src.utils import save_model
-import os
-import logging
-logging.basicConfig(level=logging.INFO)
 
-
-# ==================================Lazy Regressor Temporary=====================================#
 class LazyRegressor:
     """
     This Class is responsible for training all the models.
@@ -60,8 +51,11 @@ class LazyRegressor:
         """
         logging.info("Traing Multiple Models Start......")
         regressors = all_estimators(type_filter='regressor')
+        counter=0
         for name,model_class in regressors:
-    
+            if counter==4:
+                break
+            else:
                 try:
                     curr_time=time.time()
                     model=model_class()
@@ -114,68 +108,15 @@ class LazyRegressor:
         best_model_name = results.iloc[0]['name']  # Best model based on Adjusted R²
         logging.info(f'Best Model: {best_model_name}')
         return self.models[best_model_name]
-# ==================================Lazy Regressor Temporary=====================================#
-
-# =================================Model Training=====================================#
-class ModelTraining:
-    def __init__(self,train_data_path,test_data_path,model_output_path):
-        self.model_output_path=model_output_path
-        self.train_data=np.load(train_data_path)
-        self.test_data=np.load(test_data_path)
-    
-    def saperate_feature_label(self,train_data,test_data):
-        """
-        This fun is responsible for saperating the feature and label from the dataset
-        """
-        try:
-            logging.info("Saperating the feature and label")
-            x_train=train_data[:,:-1]
-            y_train=train_data[:,-1]
-
-            x_test=test_data[:,:-1]
-            y_test=test_data[:,-1]
-            logging.info(f"X_train: {x_train.shape}, y_train: {y_train.shape}")
-
-            return x_train,y_train,x_test,y_test
-        except Exception as e:
-            logging.error(f"Error in saperating the feature and label: {e}")
-            raise
-    
-    def train_model(self):
-        """
-        This fun is responsible for training the model
-        input: x_train,y_train
-        output: model
-        """
-        try:
-            # get the feature and label
-            x_train,y_train,x_test,y_test=self.saperate_feature_label(train_data=self.train_data,
-                                                                      test_data=self.test_data)
-
-            # Training all the models
-            reg=LazyRegressor(x_train=x_train,y_train=y_train,x_test=x_test,y_test=y_test)
-            reg.train_all()
-            # Get Best model from the trained models
-            best_model=reg.get_best_model()
-
-            if self.model_output_path:
-                logging.info(f"Saving model {self.model_output_path}")
-                save_model(model=best_model,output_path=self.model_output_path)
-
-        except Exception as e:
-            logging.error(f"Error in training the model: {e}")
-            raise
         
-        
-
 if __name__=="__main__":
-    # Set the paths training data, testing data and model_output_path
-    train_data_path='data/processed/train.npy'
-    test_data_path="data/processed/test.npy"
-    model_output_path='Models/model.pkl'
-
-    # call the transformation class
-    trainer=ModelTraining(train_data_path=train_data_path,test_data_path=test_data_path,
-                          model_output_path=model_output_path)
-    trainer.train_model()
+    # Sample Data (Use real data here)
+    x_train = np.random.rand(100, 4)  # 100 samples, 4 features
+    y_train = np.random.rand(100)
+    x_test = np.random.rand(20, 4)    # 20 samples, 4 features
+    y_test = np.random.rand(20)
     
+    reg=LazyRegressor(x_train, y_train, x_test, y_test)
+    # reg.train_all()
+    best_model=reg.get_best_model()
+    print("Prediction: ",best_model.predict(x_test))
