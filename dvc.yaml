@@ -15,7 +15,8 @@ stages:
     cmd: python src/data/feature_engineering.py
     deps:
       - src/data/feature_engineering.py
-      - data/cleaned/clean.csv
+      - data/raw/clean.csv
+      - data/processed/process.csv
 
   data_transformation:
     cmd: python src/data/data_transformation.py
