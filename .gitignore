@@ -163,4 +163,7 @@ cython_debug/
 #.idea/
 temp_remote/
 .vscode/
+<<<<<<< HEAD
 /data
+=======
+>>>>>>> e18446b6d40d2690984085e87d085525768c34e0
