@@ -1,4 +1,0 @@
-[core]
-    remote = temp
-['remote "temp"']
-    url = D:\New_Root\mlops\health_impact_analysis\temp_remote
