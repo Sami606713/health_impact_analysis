@@ -1,4 +1,4 @@
 [core]
-    remote = temp_remote
-['remote "temp_remote"']
-    url = D:\New_Root\mlops\health_impact_analysis\temp_remote
+    remote = s3_remote
+['remote "s3_remote"']
+    url = s3://healthbucketdvc

@@ -88,7 +88,6 @@ class LazyRegressor:
                         self.result['Train_Score'].append(train_cross_val)
                         self.result['Test_Score'].append(test_cross_val)
                         self.result['Time'].append(time.time()-curr_time)
-                        counter+=1
                     else:
                         logging.warning(f"Cross-validation for {name} produced NaN values, skipping this model.")
         

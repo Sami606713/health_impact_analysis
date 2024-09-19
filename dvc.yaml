@@ -31,3 +31,10 @@ stages:
       - data/processed/train.npy
       - data/processed/test.npy
       - Models/model.pkl
+
+  model_evulation:
+    cmd: python src/tests/test_model.py
+    deps:
+      - data/processed/test.npy
+      - Models/model.pkl
+      - reports/model_report.json
