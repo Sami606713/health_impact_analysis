@@ -4,11 +4,16 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.utils import all_estimators
 from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
 from sklearn.model_selection import cross_val_score
+import mlflow
+import mlflow.sklearn
 import numpy as np
 import pandas as pd
 import logging
 import time
 import warnings
+import dagshub
+dagshub.init(repo_owner='Sami606713', repo_name='health_impact_analysis', mlflow=True)
+mlflow.set_tracking_uri('https://dagshub.com/Sami606713/health_impact_analysis.mlflow')
 warnings.filterwarnings('ignore')
 
 logging.basicConfig(level=logging.INFO)
@@ -59,9 +64,10 @@ class LazyRegressor:
         Function to to train all the models
         """
         logging.info("Traing Multiple Models Start......")
+        mlflow.set_experiment("Multiple Models Tracking")
         regressors = all_estimators(type_filter='regressor')
         for name,model_class in regressors:
-    
+            with mlflow.start_run(run_name=name):
                 try:
                     curr_time=time.time()
                     model=model_class()
@@ -84,10 +90,25 @@ class LazyRegressor:
                         self.result['MAE'].append(mae)
                         self.result['MSE'].append(mse)
                         self.result['R2_Score'].append(r2)
-                        self.result["Adjusted"].append(self.adjusted_r2(r2=r2,n=self.x_test.shape[0],p=self.x_test.shape[1]))
+                        adjusted_r2=self.adjusted_r2(r2=r2,n=self.x_test.shape[0],p=self.x_test.shape[1])
+                        self.result["Adjusted"].append(adjusted_r2)
                         self.result['Train_Score'].append(train_cross_val)
                         self.result['Test_Score'].append(test_cross_val)
                         self.result['Time'].append(time.time()-curr_time)
+
+                        # Tracking model parameter and model metric
+                        mlflow.log_metric("MAE", mae)
+                        mlflow.log_metric("MSE", mse)
+                        mlflow.log_metric("R2 Score", r2)
+                        mlflow.log_metric("Adjusted R2", adjusted_r2)
+                        mlflow.log_metric("Train_Score", train_cross_val)
+                        mlflow.log_metric("Test_Score", test_cross_val)
+                        mlflow.sklearn.log_model(model,name)
+                        if hasattr(model, 'get_params'):
+                            mlflow.log_param(name+"Params", model.get_params())
+                        
+                        #====================Model Tracking End =============================#
+
                     else:
                         logging.warning(f"Cross-validation for {name} produced NaN values, skipping this model.")
         
@@ -95,7 +116,9 @@ class LazyRegressor:
                     continue
         logging.info('Taining Complete......')
         results=pd.DataFrame(self.result).sort_values(by=['Adjusted','Train_Score',"Test_Score"],ascending=[False,False,False])
-        
+        # Optionally save results as an artifact
+        results.to_csv("reports/results.csv", index=False)
+        mlflow.log_artifact("reports/results.csv")
         return results
 
     def get_best_model(self):
