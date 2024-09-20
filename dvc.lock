@@ -80,5 +80,5 @@ stages:
       size: 105728
     - path: reports/model_report.json
       hash: md5
-      md5: 1ad201d0bcf83c571831fcad4faa0b57
+      md5: 95eaf63e9c458070f4a0bd7f85b52ddb
       size: 224
