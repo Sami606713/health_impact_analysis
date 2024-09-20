@@ -5,5 +5,7 @@ xgboost
 statsmodels
 joblib
 fastapi
+pyyaml
 flask
 mlflow
+dagshub

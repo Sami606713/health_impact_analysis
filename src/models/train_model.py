@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import logging
 import time
+import yaml
 import warnings
 import dagshub
 dagshub.init(repo_owner='Sami606713', repo_name='health_impact_analysis', mlflow=True)
@@ -179,6 +180,31 @@ class ModelTraining:
             reg.train_all()
             # Get Best model from the trained models
             best_model=reg.get_best_model()
+            
+            # Train the best model again and track them using mlflow
+            with mlflow.start_run(run_name="final_model",nested=True):
+                best_model.fit(x_train,y_train)
+
+                y_pred=best_model.predict(x_test)
+                mae=mean_absolute_error(y_test,y_pred)
+                mse=mean_squared_error(y_test,y_pred)
+                r2=r2_score(y_test,y_pred)
+
+                # log them
+                mlflow.log_metric("MAE", mae)
+                mlflow.log_metric("MSE", mse)
+                mlflow.log_metric("R2 Score", r2)
+                mlflow.sklearn.log_model(best_model,"Final_Model")
+                if hasattr(best_model, 'get_params'):
+                    mlflow.log_param("Final_model_params", best_model.get_params())
+                    with open('Config/config.yml', 'w') as file:
+                        yaml.dump(best_model.get_params(), file, default_flow_style=False)
+
+                # Register the final model in mlflow registry
+                # Register the model in the Model Registry
+                model_uri = f"runs:/{mlflow.active_run().info.run_id}/final_model"
+                model_version = mlflow.register_model(model_uri=model_uri, name="final_model")
+
 
             if self.model_output_path:
                 logging.info(f"Saving model {self.model_output_path}")
