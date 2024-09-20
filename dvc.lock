@@ -53,7 +53,7 @@ stages:
     deps:
     - path: Models/model.pkl
       hash: md5
-      md5: db3179eb6f500db94b9b9790874798cf
+      md5: 38f5a61c53d93c06eb66d3cdc8168541
       size: 11539440
     - path: data/processed/test.npy
       hash: md5
@@ -65,5 +65,20 @@ stages:
       size: 422528
     - path: src/models/train_model.py
       hash: md5
-      md5: 0262a24e28e4cef79dce35a770c55ed9
-      size: 7051
+      md5: ee37850f60fbbf33da9d0f94703bf7ab
+      size: 8335
+  model_evulation:
+    cmd: python src/tests/test_model.py
+    deps:
+    - path: Models/model.pkl
+      hash: md5
+      md5: 38f5a61c53d93c06eb66d3cdc8168541
+      size: 11539440
+    - path: data/processed/test.npy
+      hash: md5
+      md5: 5b81985300f240bf04dea330b019a337
+      size: 105728
+    - path: reports/model_report.json
+      hash: md5
+      md5: 397296a153f3dbd2dbf22ea004704f75
+      size: 224
