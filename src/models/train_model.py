@@ -12,6 +12,7 @@ import logging
 import time
 import yaml
 import warnings
+import os
 import dagshub
 # Get DagsHub token from environment variable
 dagshub_token = os.getenv('e0827c8c8233051d9b1c2595adc4165db08664bf')
@@ -26,7 +27,7 @@ if dagshub_token:
     print("DagsHub login successful!")
 else:
     print("DagsHub token not found. Please set the DAGSHUB_TOKEN environment variable.")
-    
+
 warnings.filterwarnings('ignore')
 
 logging.basicConfig(level=logging.INFO)
