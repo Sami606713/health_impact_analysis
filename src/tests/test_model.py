@@ -12,7 +12,7 @@ import mlflow.pyfunc
 import os
 import dagshub
 # Get DagsHub token from environment variable
-dagshub_token = os.getenv('e0827c8c8233051d9b1c2595adc4165db08664bf')
+dagshub_token = 'e0827c8c8233051d9b1c2595adc4165db08664bf'
 
 if dagshub_token:
     # Initialize DagsHub
