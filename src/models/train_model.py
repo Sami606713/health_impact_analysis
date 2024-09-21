@@ -19,9 +19,8 @@ import dagshub
 dagshub_token = 'c170701e3da9f33bab9c1017ddda64fab61d62a5'
 
 if dagshub_token:
-    # Initialize DagsHub
-    dagshub.init(repo_owner='Sami606713', repo_name='health_impact_analysis', mlflow=True)
-
+    os.environ['MLFlow_TRACKING_USERNAME']=dagshub_token
+    os.environ['MLFlow_TRACKING_PASSWORD']=dagshub_token
     # Set up the MLflow tracking URI with authentication using the token
     mlflow.set_tracking_uri(f'https://{dagshub_token}:@dagshub.com/Sami606713/health_impact_analysis.mlflow')
 
