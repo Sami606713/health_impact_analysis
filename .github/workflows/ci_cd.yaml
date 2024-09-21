@@ -44,6 +44,9 @@ jobs:
       - name: Pull data from DVC remote (if necessary)
         run: |
           dvc pull
+          env:
+            DAGSHUB_USER: ${{ secrets.DAGSHUB_USER }}
+            DAGSHUB_TOKEN: ${{ secrets.DAGS_HUB }}
       - name: Run DVC pipeline
         run: |
           dvc repro
