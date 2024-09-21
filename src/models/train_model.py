@@ -31,7 +31,7 @@ else:
 warnings.filterwarnings('ignore')
 
 logging.basicConfig(level=logging.INFO)
-from src.utils import save_model
+# from src.utils import save_model
 import os
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -226,13 +226,24 @@ class ModelTraining:
 
             if self.model_output_path:
                 logging.info(f"Saving model {self.model_output_path}")
-                save_model(model=best_model,output_path=self.model_output_path)
+                self.save_model(model=best_model,output_path=self.model_output_path)
 
         except Exception as e:
             logging.error(f"Error in training the model: {e}")
             raise
-        
-        
+    
+    def save_model(self,model,output_path):
+        """
+        This function will save the model to the disk
+        """
+        try:
+            logging.info("Saving the model")
+            with open(output_path, 'wb') as file:
+                pkl.dump(model, file)
+        except Exception as e:
+            logging.error(f"Error in saving the model: {e}")
+            raise
+    
 
 if __name__=="__main__":
     # Set the paths training data, testing data and model_output_path
