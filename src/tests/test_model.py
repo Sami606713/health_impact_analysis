@@ -11,8 +11,19 @@ import mlflow.pyfunc
 # from mlflow import MlflowClient
 import os
 import dagshub
-dagshub.init(repo_owner='Sami606713', repo_name='health_impact_analysis', mlflow=True)
-mlflow.set_tracking_uri('https://dagshub.com/Sami606713/health_impact_analysis.mlflow')
+# Get DagsHub token from environment variable
+dagshub_token = os.getenv('e0827c8c8233051d9b1c2595adc4165db08664bf')
+
+if dagshub_token:
+    # Initialize DagsHub
+    dagshub.init(repo_owner='Sami606713', repo_name='health_impact_analysis', mlflow=True)
+
+    # Set up the MLflow tracking URI with authentication using the token
+    mlflow.set_tracking_uri(f'https://{dagshub_token}:@dagshub.com/Sami606713/health_impact_analysis.mlflow')
+
+    print("DagsHub login successful!")
+else:
+    print("DagsHub token not found. Please set the DAGSHUB_TOKEN environment variable.")
 logging.basicConfig(level=logging.INFO)
 
 
