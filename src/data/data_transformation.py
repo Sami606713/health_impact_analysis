@@ -67,8 +67,6 @@ class DataTransformation:
                 text_transformers=text_transformers
             )
 
-            logging.info(f"saving the transformer at {self.transformer_path}")
-            save_model(transformer,self.transformer_path)
             return transformer
 
         except Exception as e:
@@ -118,7 +116,8 @@ class DataTransformation:
             # logging.info("Save the train and test array")
             np.save(file=self.train_output_path,arr=train_array)
             np.save(file=self.test_output_path,arr=test_array)
-
+            logging.info(f"saving the transformer at {self.transformer_path}")
+            save_model(transformer,self.transformer_path)
             logging.info("Data Transformation Completed......")
         except Exception as e:
             logging.info(f"Error in processing the data: {e}")
