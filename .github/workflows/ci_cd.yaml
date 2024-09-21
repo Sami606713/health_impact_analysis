@@ -45,8 +45,12 @@ jobs:
         run: |
           dvc pull
 
+      - name: Set DagsHub Token in Environment
+        run: |
+          echo "DAGSHUB_TOKEN=${{ secrets.DAGS_HUB }}" >> $GITHUB_ENV
+
       - name: Run DVC pipeline
         env:
-          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGS_HUB }}
         run: |
           dvc repro
