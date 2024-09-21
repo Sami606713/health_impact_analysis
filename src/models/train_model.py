@@ -67,7 +67,11 @@ class LazyRegressor:
         logging.info("Traing Multiple Models Start......")
         mlflow.set_experiment("Multiple Models Tracking")
         regressors = all_estimators(type_filter='regressor')
+        counter=0
         for name,model_class in regressors:
+            if counter >= 10:  # Stop the loop if counter reaches 10
+                logging.info("Counter reached 10, stopping the process.")
+                break
             with mlflow.start_run(run_name=name):
                 try:
                     curr_time=time.time()
@@ -107,7 +111,8 @@ class LazyRegressor:
                         mlflow.sklearn.log_model(model,name)
                         if hasattr(model, 'get_params'):
                             mlflow.log_param(name+"Params", model.get_params())
-                        
+                        # Increment the counter for each successful run
+                        counter += 1
                         #====================Model Tracking End =============================#
 
                     else:

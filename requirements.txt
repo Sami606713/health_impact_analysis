@@ -4,8 +4,7 @@ scikit-learn
 xgboost
 statsmodels
 joblib
-fastapi
-fastapi[standard]
+fastapi[standard]  # Keep this if you need FastAPI's standard dependencies
 pyyaml
 flask
 mlflow
