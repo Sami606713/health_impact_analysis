@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
+from src.utils import save_model
 import pickle as pkl
 import pandas as pd
 import numpy as np
@@ -128,7 +129,7 @@ class DataTransformation:
             np.save(file=self.train_output_path,arr=train_array)
             np.save(file=self.test_output_path,arr=test_array)
             logging.info(f"saving the transformer at {self.transformer_path}")
-            self.save_model(transformer,self.transformer_path)
+            save_model(transformer,self.transformer_path)
             logging.info("Data Transformation Completed......")
         except Exception as e:
             logging.info(f"Error in processing the data: {e}")

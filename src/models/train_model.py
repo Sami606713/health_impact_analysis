@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.utils import all_estimators
 from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
 from sklearn.model_selection import cross_val_score
+from src.utils import save_model
 import mlflow
 import mlflow.sklearn
 import numpy as np
@@ -15,6 +16,9 @@ import yaml
 import warnings
 import os
 import dagshub
+warnings.filterwarnings('ignore')
+import logging
+logging.basicConfig(level=logging.INFO)
 # Get DagsHub token from environment variable
 dagshub_token = 'c170701e3da9f33bab9c1017ddda64fab61d62a5'
 
@@ -27,15 +31,6 @@ if dagshub_token:
     print("DagsHub login successful!")
 else:
     print("DagsHub token not found. Please set the DAGSHUB_TOKEN environment variable.")
-
-warnings.filterwarnings('ignore')
-
-logging.basicConfig(level=logging.INFO)
-# from src.utils import save_model
-import os
-import logging
-logging.basicConfig(level=logging.INFO)
-
 
 # ==================================Lazy Regressor Temporary=====================================#
 class LazyRegressor:
@@ -226,7 +221,7 @@ class ModelTraining:
 
             if self.model_output_path:
                 logging.info(f"Saving model {self.model_output_path}")
-                self.save_model(model=best_model,output_path=self.model_output_path)
+                save_model(model=best_model,output_path=self.model_output_path)
 
         except Exception as e:
             logging.error(f"Error in training the model: {e}")
