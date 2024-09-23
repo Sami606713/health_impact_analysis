@@ -10,3 +10,4 @@ flask
 mlflow
 dagshub
 awscli
+python-dotenv

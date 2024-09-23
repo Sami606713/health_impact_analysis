@@ -16,11 +16,12 @@ import yaml
 import warnings
 import os
 import dagshub
+from dotenv import load_dotenv
 warnings.filterwarnings('ignore')
 import logging
 logging.basicConfig(level=logging.INFO)
-# Get DagsHub token from environment variable
-dagshub_token = 'c170701e3da9f33bab9c1017ddda64fab61d62a5'
+load_dotenv()
+dagshub_token = os.getenv('DAGSHUB_TOKEN')
 
 if dagshub_token:
     os.environ['MLFlow_TRACKING_USERNAME']=dagshub_token

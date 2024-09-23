@@ -11,8 +11,9 @@ import mlflow.pyfunc
 # from mlflow import MlflowClient
 import os
 import dagshub
-# Get DagsHub token from environment variable
-dagshub_token = 'c170701e3da9f33bab9c1017ddda64fab61d62a5'
+from dotenv import load_dotenv
+load_dotenv()
+dagshub_token = os.getenv('DAGSHUB_TOKEN')
 
 if dagshub_token:
     os.environ['MLFlow_TRACKING_USERNAME']=dagshub_token
