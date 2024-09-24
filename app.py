@@ -5,8 +5,20 @@ import mlflow
 import pickle as pkl
 import os
 import dagshub
-dagshub.init(repo_owner='Sami606713', repo_name='health_impact_analysis', mlflow=True)
-mlflow.set_tracking_uri('https://dagshub.com/Sami606713/health_impact_analysis.mlflow')
+from mlflow import MlflowClient
+from dotenv import load_dotenv
+load_dotenv()
+dagshub_token = os.getenv('DAGSHUB_TOKEN')
+
+if dagshub_token:
+    os.environ['MLFlow_TRACKING_USERNAME']=dagshub_token
+    os.environ['MLFlow_TRACKING_PASSWORD']=dagshub_token
+    # Set up the MLflow tracking URI with authentication using the token
+    mlflow.set_tracking_uri(f'https://{dagshub_token}:@dagshub.com/Sami606713/health_impact_analysis.mlflow')
+
+    print("DagsHub login successful!")
+else:
+    print("DagsHub token not found. Please set the DAGSHUB_TOKEN environment variable.")
 
 
 app = FastAPI()
@@ -62,18 +74,20 @@ def load_processor(processor_path:str):
         return str(e)
 
 
-def load_model(model_name,model_version):
+def load_model(model_name):
     """
     This fun is responsible for loading the model.
     input: Modle Path
     output: Model
     """
     try:
-        if model_version:
-            model_uri = f"models:/{model_name}/{model_version}"
-        else:
-                # in 2-3 days set the version is production
-            model_uri = f"models:/{model_name}/{model_version}"  # Load latest production version
+        # in 2-3 days set the version is production
+        client=MlflowClient()
+        latest_version=client.get_latest_versions(model_name,stages=["Production"])
+        if not latest_version:
+            return (f"No versions available for model '{model_name}' in stage Production.")
+        
+        model_uri = f"models:/{model_name}/{latest_version}"  # Load latest production version
         model = mlflow.sklearn.load_model(model_uri) 
         return model
     except FileNotFoundError as e:
@@ -95,7 +109,7 @@ async def predict(heatlth_data: HealthPredictionInput):
         # # transform the data
         final_data= processor.transform(input_data)
         # # load model
-        model=load_model("final_model",1)
+        model=load_model("final_model")
 
         # # prediction
         response=model.predict(final_data)

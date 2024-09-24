@@ -7,18 +7,19 @@ from sklearn.model_selection import cross_val_score
 # from src.utils import save_model
 import mlflow
 import mlflow.sklearn
+from mlflow import MlflowClient
 import numpy as np
 import pandas as pd
 import pickle as pkl
 import logging
+import dagshub
+from dotenv import load_dotenv
 import time
 import yaml
 import warnings
-import os
-import dagshub
-from dotenv import load_dotenv
-warnings.filterwarnings('ignore')
 import logging
+import os
+warnings.filterwarnings('ignore')
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
 dagshub_token = os.getenv('DAGSHUB_TOKEN')
@@ -74,7 +75,7 @@ class LazyRegressor:
         Function to to train all the models
         """
         logging.info("Traing Multiple Models Start......")
-        mlflow.set_experiment("Multiple Models Tracking")
+        mlflow.set_experiment("Tracking Multiple Models")
         regressors = all_estimators(type_filter='regressor')
         counter=0
         for name,model_class in regressors:
@@ -155,8 +156,7 @@ class LazyRegressor:
 
 # =================================Model Training=====================================#
 class ModelTraining:
-    def __init__(self,train_data_path,test_data_path,model_output_path):
-        self.model_output_path=model_output_path
+    def __init__(self,train_data_path,test_data_path):
         self.train_data=np.load(train_data_path)
         self.test_data=np.load(test_data_path)
     
@@ -214,41 +214,44 @@ class ModelTraining:
                     with open('Config/config.yml', 'w') as file:
                         yaml.dump(best_model.get_params(), file, default_flow_style=False)
 
-                # Register the final model in mlflow registry
                 # Register the model in the Model Registry
                 model_uri = f"runs:/{mlflow.active_run().info.run_id}/final_model"
-                model_version = mlflow.register_model(model_uri=model_uri, name="final_model")
+                final_model = mlflow.register_model(model_uri=model_uri, name="final_model")
 
 
-            if self.model_output_path:
-                logging.info(f"Saving model {self.model_output_path}")
-                self.save_model(model=best_model,output_path=self.model_output_path)
+                self.register_model(model_name="final_model",final_model=final_model)
 
         except Exception as e:
             logging.error(f"Error in training the model: {e}")
             raise
     
-    def save_model(self,model,output_path):
+    def register_model(self,model_name,final_model):
         """
         This function will save the model to the disk
         """
         try:
-            logging.info("Saving the model")
-            with open(output_path, 'wb') as file:
-                pkl.dump(model, file)
+            logging.info("Register the model.")
+            client = MlflowClient()
+            latest_versions = final_model.version
+
+            # Transition the latest version to Staging
+            print(f"Model version {final_model.version}")
+            client.transition_model_version_stage(
+                name=model_name,
+                version=latest_versions,
+                stage='Staging'
+            )
         except Exception as e:
-            logging.error(f"Error in saving the model: {e}")
+            logging.error(f"Error in register the model: {e} with version {latest_versions}")
             raise
     
 
 if __name__=="__main__":
-    # Set the paths training data, testing data and model_output_path
+    # Set the paths training data, testing data
     train_data_path='data/processed/train.npy'
     test_data_path="data/processed/test.npy"
-    model_output_path='Models/model.pkl'
 
     # call the transformation class
-    trainer=ModelTraining(train_data_path=train_data_path,test_data_path=test_data_path,
-                          model_output_path=model_output_path)
+    trainer=ModelTraining(train_data_path=train_data_path,test_data_path=test_data_path)
     trainer.train_model()
     

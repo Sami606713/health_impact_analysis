@@ -8,7 +8,7 @@ import pandas as pd
 import json
 import mlflow 
 import mlflow.pyfunc
-# from mlflow import MlflowClient
+from mlflow import MlflowClient
 import os
 import dagshub
 from dotenv import load_dotenv
@@ -29,11 +29,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 class ModelEvulation:
-    def __init__(self,test_data_path,model_name,report_path,model_version=None):
+    def __init__(self,test_data_path,model_name,report_path,stage):
         self.test_data=np.load(test_data_path)
         self.model_name = model_name
-        self.model_version = model_version
         self.report_path=report_path
+        self.stage=stage
     
     def evulate_model(self):
         """
@@ -49,7 +49,9 @@ class ModelEvulation:
         y_pred=model.predict(x_test)
 
         test_score=cross_val_score(model,x_test,y_pred,cv=5,scoring="r2").mean()
-
+        if test_score>=90:
+            print(f'Test Score is > 90')
+            self.prompote_model()
         report=self.get_report(actual=y_test,y_pred=y_pred,x_test=x_test,test_score=test_score)
         logging.info(f"Report:\n{pd.DataFrame(report,index=[0])}")
         logging.info(f"Saving Report {self.report_path}")
@@ -61,21 +63,40 @@ class ModelEvulation:
         This fun is responsible for loading the model.
         input: Modle Path
         output: Model
+        1- load the latest staging model and test its performance if performance is >90.
+        2- Get the model version and prompte the model in producion
         """
         try:
             logging.info("Loading Model...")
-            if self.model_version:
-                model_uri = f"models:/{self.model_name}/{self.model_version}"
-            else:
-                # in 2-3 days set the version is production
-                model_uri = f"models:/{self.model_name}/{self.model_version}"  # Load latest production version
+            model_uri = f"models:/{self.model_name}/{self.stage}/latest" 
             model = mlflow.sklearn.load_model(model_uri) 
-            logging.info(f"{self.model_name} Load...")
+            logging.info(f"{self.model_name} Loaded")
             return model
         except FileNotFoundError as e:
             logging.error(str(e))
             raise
     
+    def prompote_model(self):
+        """
+        This fun is responsible for prompte the model staging --> production.
+        """
+        try:
+            client=MlflowClient()
+            latest_version=client.get_latest_versions(self.model_name,stages=[self.stage])
+            if not latest_version:
+                raise ValueError(f"No versions available for model '{self.model_name}' in stage '{self.stage}'.")
+
+            # Prompte  the model
+            print(f"{self.model_name} loaded with version {latest_version}")
+            client.transition_model_version_stage(
+                name=self.model_name,
+                version=latest_version,
+                stage='Production'
+            )
+            print("Model Prompted successfully.....")
+        except Exception as e:
+            return str(e)
+
     def adjusted_r2(self,r2, n, p):
         """
         Function to calculate the adjusted R² score.
@@ -105,6 +126,6 @@ class ModelEvulation:
 
 
 if __name__=="__main__":
-    evulation=ModelEvulation(test_data_path='data/processed/test.npy',model_name="final_model",model_version=1,
-                             report_path='reports/model_report.json')
+    evulation=ModelEvulation(test_data_path='data/processed/test.npy',model_name="final_model",
+                             report_path='reports/model_report.json',stage="Staging")
     evulation.evulate_model()

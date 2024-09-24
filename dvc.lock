@@ -46,8 +46,8 @@ stages:
       size: 424797
     - path: src/data/data_transformation.py
       hash: md5
-      md5: f0011b2907a04c740c381d5aca5f29e8
-      size: 5470
+      md5: bea7b846810c52defc364fc685ed5527
+      size: 5864
   model_training:
     cmd: python src/models/train_model.py
     deps:
