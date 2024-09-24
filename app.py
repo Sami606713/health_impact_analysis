@@ -83,12 +83,15 @@ def load_model(model_name):
     try:
         # in 2-3 days set the version is production
         client=MlflowClient()
-        latest_version=client.get_latest_versions(model_name,stages=["Production"])
+        latest_version=client.get_model_version_by_alias(model_name, "champion").version
         if not latest_version:
-            return (f"No versions available for model '{model_name}' in stage Production.")
+            return (f"No versions available for model '{model_name}' with alais champion.")
+        else:
+            model_uri = f"models:/{model_name}@champion" 
+            model = mlflow.sklearn.load_model(model_uri) 
         
-        model_uri = f"models:/{model_name}/{latest_version}"  # Load latest production version
-        model = mlflow.sklearn.load_model(model_uri) 
+        # model_uri = f"models:/{model_name}/{latest_version}"
+        # model = mlflow.sklearn.load_model(model_uri) 
         return model
     except FileNotFoundError as e:
         return str(e)

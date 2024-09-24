@@ -65,8 +65,8 @@ stages:
       size: 422528
     - path: src/models/train_model.py
       hash: md5
-      md5: f3d269c8de77f6b0c5e3e37167e892c0
-      size: 9881
+      md5: 95215dfbb938998f8557c157d4f90000
+      size: 10618
   model_evulation:
     cmd: python src/tests/test_model.py
     deps:

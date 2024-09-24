@@ -29,11 +29,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 class ModelEvulation:
-    def __init__(self,test_data_path,model_name,report_path,stage):
+    def __init__(self,test_data_path,model_name,report_path,alais):
         self.test_data=np.load(test_data_path)
         self.model_name = model_name
         self.report_path=report_path
-        self.stage=stage
+        self.alais=alais
     
     def evulate_model(self):
         """
@@ -49,10 +49,13 @@ class ModelEvulation:
         y_pred=model.predict(x_test)
 
         test_score=cross_val_score(model,x_test,y_pred,cv=5,scoring="r2").mean()
-        if test_score>=90:
-            print(f'Test Score is > 90')
-            self.prompote_model()
+        
         report=self.get_report(actual=y_test,y_pred=y_pred,x_test=x_test,test_score=test_score)
+
+        if report['Adjusted R2 Score']*100 >= 90:
+            print(f"{report['Adjusted R2 Score']} is > 90")
+            self.prompote_model()
+
         logging.info(f"Report:\n{pd.DataFrame(report,index=[0])}")
         logging.info(f"Saving Report {self.report_path}")
         self.save_report(report_path=self.report_path,report=report)
@@ -68,13 +71,12 @@ class ModelEvulation:
         """
         try:
             logging.info("Loading Model...")
-            model_uri = f"models:/{self.model_name}/{self.stage}/latest" 
+            model_uri = f"models:/{self.model_name}@dev" 
             model = mlflow.sklearn.load_model(model_uri) 
             logging.info(f"{self.model_name} Loaded")
             return model
         except FileNotFoundError as e:
             logging.error(str(e))
-            raise
     
     def prompote_model(self):
         """
@@ -82,17 +84,15 @@ class ModelEvulation:
         """
         try:
             client=MlflowClient()
-            latest_version=client.get_latest_versions(self.model_name,stages=[self.stage])
+            latest_version=client.get_model_version_by_alias(self.model_name, self.alais).version
             if not latest_version:
-                raise ValueError(f"No versions available for model '{self.model_name}' in stage '{self.stage}'.")
+                logging.error(f"No versions available for model '{self.model_name}' in alais '{self.alais}'.")
 
             # Prompte  the model
             print(f"{self.model_name} loaded with version {latest_version}")
-            client.transition_model_version_stage(
-                name=self.model_name,
-                version=latest_version,
-                stage='Production'
-            )
+            client.set_registered_model_alias(self.model_name,
+                                              "champion", 
+                                              version=latest_version)
             print("Model Prompted successfully.....")
         except Exception as e:
             return str(e)
@@ -127,5 +127,38 @@ class ModelEvulation:
 
 if __name__=="__main__":
     evulation=ModelEvulation(test_data_path='data/processed/test.npy',model_name="final_model",
-                             report_path='reports/model_report.json',stage="Staging")
+                             report_path='reports/model_report.json',alais="dev")
     evulation.evulate_model()
+
+
+# # ========================================================
+# import mlflow 
+# import mlflow.pyfunc
+# from mlflow import MlflowClient
+# import os
+# import dagshub
+# from dotenv import load_dotenv
+# load_dotenv()
+# dagshub_token = os.getenv('DAGSHUB_TOKEN')
+
+# if dagshub_token:
+#     os.environ['MLFlow_TRACKING_USERNAME']=dagshub_token
+#     os.environ['MLFlow_TRACKING_PASSWORD']=dagshub_token
+#     # Set up the MLflow tracking URI with authentication using the token
+#     mlflow.set_tracking_uri(f'https://{dagshub_token}:@dagshub.com/Sami606713/health_impact_analysis.mlflow')
+
+#     print("DagsHub login successful!")
+# else:
+#     print("DagsHub token not found. Please set the DAGSHUB_TOKEN environment variable.")
+
+# from mlflow import MlflowClient
+
+
+# client = MlflowClient()
+# model_name = "final_model"
+# alias = "dev"  # or any other alias you are interested in
+
+# # Get the model version by alias
+# model_version = client.get_model_version_by_alias(model_name, alias)
+
+# print(f"Latest version of the model with alias {alias}: {model_version.version}")

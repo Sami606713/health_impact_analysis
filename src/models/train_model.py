@@ -75,7 +75,7 @@ class LazyRegressor:
         Function to to train all the models
         """
         logging.info("Traing Multiple Models Start......")
-        mlflow.set_experiment("Tracking Multiple Models")
+        mlflow.set_experiment("Training Models")
         regressors = all_estimators(type_filter='regressor')
         counter=0
         for name,model_class in regressors:
@@ -208,14 +208,14 @@ class ModelTraining:
                 mlflow.log_metric("MAE", mae)
                 mlflow.log_metric("MSE", mse)
                 mlflow.log_metric("R2 Score", r2)
-                mlflow.sklearn.log_model(best_model,"Final_Model")
+                mlflow.sklearn.log_model(best_model,"final_Model")
                 if hasattr(best_model, 'get_params'):
                     mlflow.log_param("Final_model_params", best_model.get_params())
                     with open('Config/config.yml', 'w') as file:
                         yaml.dump(best_model.get_params(), file, default_flow_style=False)
 
                 # Register the model in the Model Registry
-                model_uri = f"runs:/{mlflow.active_run().info.run_id}/final_model"
+                model_uri = f"runs:/{mlflow.active_run().info.run_id}/final_Model"
                 final_model = mlflow.register_model(model_uri=model_uri, name="final_model")
 
 
@@ -234,16 +234,12 @@ class ModelTraining:
             client = MlflowClient()
             latest_versions = final_model.version
 
-            # Transition the latest version to Staging
+            # Transition the latest version to alais as dev
             print(f"Model version {final_model.version}")
-            client.transition_model_version_stage(
-                name=model_name,
-                version=latest_versions,
-                stage='Staging'
-            )
+            client.set_registered_model_alias(model_name, "dev", version=latest_versions)
+
         except Exception as e:
             logging.error(f"Error in register the model: {e} with version {latest_versions}")
-            raise
     
 
 if __name__=="__main__":
