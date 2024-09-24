@@ -1,7 +1,7 @@
 {
-    "Mean Squared Error": 0.013253728040989116,
-    "Mean Absolute Error": 0.08655236236447472,
-    "R2 Score": 0.9666924758292268,
-    "Adjusted R2 Score": 0.9505358409702697,
-    "Test Score": 0.9999856604405917
+    "Mean Squared Error": 0.0058078553284899945,
+    "Mean Absolute Error": 0.059335513228703896,
+    "R2 Score": 0.9854044627190345,
+    "Adjusted R2 Score": 0.9783245379185661,
+    "Test Score": 0.9423751849655482
 }

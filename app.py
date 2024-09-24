@@ -91,8 +91,6 @@ def load_model(model_name):
             model_uri = f"models:/{model_name}@champion" 
             model = mlflow.sklearn.load_model(model_uri) 
         
-        # model_uri = f"models:/{model_name}/{latest_version}"
-        # model = mlflow.sklearn.load_model(model_uri) 
         return model
     except FileNotFoundError as e:
         return str(e)
