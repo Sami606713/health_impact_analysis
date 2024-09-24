@@ -5,7 +5,7 @@ client = TestClient(app)
 
 def test_health_prediction():
     test_data = {
-        "datetimeEpo": 1622918421.0,
+        "datetimeEpoch": 1622918421.0,
         "tempmax": 32.0,
         "tempmin": 24.0,
         "temp": 28.0,
