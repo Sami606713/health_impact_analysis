@@ -65,20 +65,16 @@ stages:
       size: 422528
     - path: src/models/train_model.py
       hash: md5
-      md5: 95215dfbb938998f8557c157d4f90000
-      size: 10618
+      md5: 90e85bf7c5a99ca2380f3cd6de6435dd
+      size: 10512
   model_evulation:
     cmd: python src/tests/test_model.py
     deps:
-    - path: Models/model.pkl
-      hash: md5
-      md5: 4c0332ef5f8335febede8d35cc30bac0
-      size: 11539440
     - path: data/processed/test.npy
       hash: md5
       md5: 5b81985300f240bf04dea330b019a337
       size: 105728
     - path: reports/model_report.json
       hash: md5
-      md5: 6fc1035b35489610f8db6b1ced64e73a
-      size: 224
+      md5: 345d40cfe0df6e6c7cc934497f0db86b
+      size: 225
