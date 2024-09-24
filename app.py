@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from mlflow import MlflowClient
+from dotenv import load_dotenv
 import pandas as pd
 import mlflow
 import pickle as pkl
-import os
 import dagshub
-from mlflow import MlflowClient
-from dotenv import load_dotenv
+import uvicorn
+import os
 load_dotenv()
 dagshub_token = os.getenv('DAGSHUB_TOKEN')
 
@@ -123,3 +124,7 @@ async def predict(heatlth_data: HealthPredictionInput):
         return {"prediction": serializable_response}
     except Exception as e:
         return {"Error": str(e)}
+
+
+if __name__=="__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

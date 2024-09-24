@@ -1,13 +1,15 @@
-pandas
-numpy
-scikit-learn
-xgboost
-statsmodels
-joblib
-fastapi[standard]  # Keep this if you need FastAPI's standard dependencies
-pyyaml
-flask
-mlflow
-dagshub
+dagshub==0.3.36
+fastapi==0.115.0
+mlflow==2.16.2
+numpy==2.1.1
+pandas==2.2.3
+pydantic==2.9.2
+python-dotenv==1.0.1
+PyYAML==6.0.2
+PyYAML==6.0.2
+scikit_learn==1.5.2
+setuptools==74.1.2
+statsmodels==0.14.3
+uvicorn==0.30.6
 awscli
-python-dotenv
+xgboost
