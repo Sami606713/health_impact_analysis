@@ -93,6 +93,6 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/health_impact:latest
             docker stop mp-app || true
             docker rm mp-app || true
-            docker run -d -p 80:8000 ${{ secrets.DOCKER_USERNAME }}/health_impact:latest
-              -e DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }}
+            docker run -d -p 80:8000 --name my-app \
+              -e DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }} \
               ${{ secrets.DOCKER_USERNAME }}/health_impact:latest
