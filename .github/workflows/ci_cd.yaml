@@ -91,6 +91,8 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/health_impact:latest
+            docker stop my-app || true
+            docker rm my-app || true
             docker run -d -p 80:8000 --name my-app \
               -e DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }} \
               ${{ secrets.DOCKER_USERNAME }}/health_impact:latest
